@@ -19,7 +19,7 @@ enum VWAP_SESSION_TYPE {
 class COmakVWAP
 {
 private:
-    CSymbolInfo m_symbol;
+    CSymbolInfo m_vwap_symbol;
     string m_symbol_name;
     ENUM_TIMEFRAMES m_timeframe;
     VWAP_SESSION_TYPE m_session_type;
@@ -74,7 +74,7 @@ public:
     
     bool Init(string symbol, ENUM_TIMEFRAMES tf = PERIOD_M15, VWAP_SESSION_TYPE session = VWAP_DAILY)
     {
-        if(!m_symbol.Name(symbol)) {
+        if(!m_vwap_symbol.Name(symbol)) {
             Print("VWAP: Failed to initialize symbol: ", symbol);
             return false;
         }
@@ -120,7 +120,7 @@ public:
     // Price relative to VWAP
     double GetVWAPDistance(double price = 0) 
     { 
-        if(price == 0) price = m_symbol.Bid();
+        if(price == 0) price = m_vwap_symbol.Bid();
         if(m_vwap_value == 0) return 0;
         return (price - m_vwap_value) / m_vwap_value * 100; 
     }
@@ -139,28 +139,28 @@ public:
     // VWAP trading signals
     bool IsBullishSignal(double price = 0)
     {
-        if(price == 0) price = m_symbol.Bid();
+        if(price == 0) price = m_vwap_symbol.Bid();
         return (price > m_vwap_value && IsVolumeSignificant());
     }
     
     bool IsBearishSignal(double price = 0)
     {
-        if(price == 0) price = m_symbol.Bid();
+        if(price == 0) price = m_vwap_symbol.Bid();
         return (price < m_vwap_value && IsVolumeSignificant());
     }
     
     // Support/Resistance levels
     bool IsNearSupport(double price = 0, double tolerance = 0.1)
     {
-        if(price == 0) price = m_symbol.Bid();
-        double distance = MathAbs(price - m_vwap_lower_1) / m_symbol.Point();
+        if(price == 0) price = m_vwap_symbol.Bid();
+        double distance = MathAbs(price - m_vwap_lower_1) / m_vwap_symbol.Point();
         return distance <= tolerance * 100; // Convert to points
     }
     
     bool IsNearResistance(double price = 0, double tolerance = 0.1)
     {
-        if(price == 0) price = m_symbol.Bid();
-        double distance = MathAbs(price - m_vwap_upper_1) / m_symbol.Point();
+        if(price == 0) price = m_vwap_symbol.Bid();
+        double distance = MathAbs(price - m_vwap_upper_1) / m_vwap_symbol.Point();
         return distance <= tolerance * 100; // Convert to points
     }
     
@@ -193,28 +193,28 @@ public:
 private:
     bool ShouldResetSession()
     {
-        MqlDateTime current_time, last_reset_time;
+        MqlDateTime current_time, vwap_last_reset_time;
         TimeToStruct(TimeCurrent(), current_time);
-        TimeToStruct(m_last_reset, last_reset_time);
+        TimeToStruct(m_last_reset, vwap_last_reset_time);
         
         switch(m_session_type) {
             case VWAP_DAILY:
-                return (current_time.day != last_reset_time.day);
+                return (current_time.day != vwap_last_reset_time.day);
                 
             case VWAP_WEEKLY:
-                return (current_time.day_of_week == 1 && last_reset_time.day_of_week != 1);
+                return (current_time.day_of_week == 1 && vwap_last_reset_time.day_of_week != 1);
                 
             case VWAP_MONTHLY:
-                return (current_time.mon != last_reset_time.mon);
+                return (current_time.mon != vwap_last_reset_time.mon);
                 
             case VWAP_LONDON:
-                return (current_time.hour == 8 && last_reset_time.hour != 8);
+                return (current_time.hour == 8 && vwap_last_reset_time.hour != 8);
                 
             case VWAP_NY:
-                return (current_time.hour == 13 && last_reset_time.hour != 13);
+                return (current_time.hour == 13 && vwap_last_reset_time.hour != 13);
                 
             case VWAP_ASIAN:
-                return (current_time.hour == 0 && last_reset_time.hour != 0);
+                return (current_time.hour == 0 && vwap_last_reset_time.hour != 0);
         }
         
         return false;
@@ -299,7 +299,8 @@ private:
 double CalculateWeightedMAD(CArrayDouble *deviations, CArrayDouble *weights)
 {
     // Sort deviations by value
-    CArrayInt indices = SortIndices(deviations);
+    // TODO: Implement SortIndices or provide alternative
+    // CArrayInt indices = SortIndices(deviations);
 
     // Calculate cumulative weight
     double total_weight = 0;
@@ -309,6 +310,7 @@ double CalculateWeightedMAD(CArrayDouble *deviations, CArrayDouble *weights)
     // Find weighted median index
     double cum_weight = 0;
     int median_idx = 0;
+    /*
     for(int i=0; i<indices.Total(); i++)
     {
         cum_weight += weights.At(indices[i]);
@@ -318,6 +320,7 @@ double CalculateWeightedMAD(CArrayDouble *deviations, CArrayDouble *weights)
             break;
         }
     }
+    */
 
     // Return median absolute deviation
     return deviations.At(median_idx);

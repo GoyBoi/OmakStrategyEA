@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "applyTo": "**",
+  "description": "Elite Expert Advisor project built on MT5. Follow these strict rules to assist intelligently.",
+  "rules": [
+    {
+      "title": "Primary Objective",
+      "content": "This EA is designed for scalping and trend continuation in Forex markets. It should be capable of holding trades across multiple sessions when technical conditions permit. Entries are based on smart money concepts (order blocks, liquidity sweeps, volume delta, adaptive MAs, VWAP)."
+    },
+    {
+      "title": "Risk Management Rules",
+      "content": "Do not alter or bypass the EA’s risk constraints. Risk must remain consistent across account sizes. Implement dynamic lot sizing logic based on a Fibonacci-like compounding structure: as balance grows (e.g. $5 > $10 > $30), lot sizes increase proportionally while keeping drawdown under control."
+    },
+    {
+      "title": "File Structure Responsibilities",
+      "content": "Each module (.mqh) has a dedicated purpose. Do not duplicate functionality or spread logic across unrelated files. Example: `OmakOrderBlocks.mqh` must only handle order block logic. `OmakVWAP.mqh` is for VWAP, `OmakVolumeDelta.mqh` for volume delta, etc."
+    },
+    {
+      "title": "Optimization Focus",
+      "content": "Your priority is to improve execution efficiency, entry precision, and overall trade profitability. Prioritize low drawdown and optimal entry filtering logic. You are allowed to suggest confluence improvements but should not refactor unless absolutely safe."
+    },
+    {
+      "title": "No Major Functional Changes",
+      "content": "Do NOT modify critical trading behavior or existing decision logic without explicit permission. If unsure, skip that file or create a commented block of the suggestion. Never hallucinate new logic that hasn't been validated."
+    },
+    {
+      "title": "Track Your Changes",
+      "content": "Log every change you make into a file called `CopilotChangeLog.md` in the project root. Explain what you changed, why, and which files were affected. Every code change must have a corresponding entry in this file."
+    },
+    {
+      "title": "AI Behavior & Web Validation",
+      "content": "You are allowed to search the web to validate whether indicators and modules used (ATR, RSI, VWAP, etc.) follow current best practices. Replace outdated approaches only after confirming compatibility with MT5. Suggest improvements with links to sources if possible."
+    },
+    {
+      "title": "No Third-Party Dependencies",
+      "content": "Use ONLY native MQL5/MetaTrader tools. Do not introduce Python, databases, or webhooks at this stage. The project must remain portable, testable, and forward-testable in MetaTrader 5."
+    },
+    {
+      "title": "License Notice",
+      "content": "This code is privately owned under the name 'OmakExpress'. Assume private/personal use. No public licensing or open-source exposure is intended at this stage."
+    },
+    {
+      "title": "Forex First",
+      "content": "Assume this EA is designed for Forex majors and minors. Other asset support (indices, commodities) may be added later but must not take priority or introduce instability."
+    },
+    {
+      "title": "Documentation Standards",
+      "content": "Every function must have a clear, concise comment block explaining its purpose, parameters, and return values. Use Doxygen-style comments for consistency. Maintain high standards of code readability and maintainability."
+    },
+    {
+      "title": "Testing & Validation",
+      "content": "Before suggesting any changes, ensure they are thoroughly tested in a demo environment. Do not propose changes that could lead to unexpected behavior without proper validation."
+    },
+    {
+        "title": "Compilation Assistance",
+        "content": "If you detect compilation errors, do not modify major logic. Instead, isolate the broken function and suggest fixes via comments. Prefer minimal, reversible changes. Refer to COMPILATION_GUIDE.md before assuming code is incorrect. Track all compiler-related changes in CopilotChangeLog.md."
+    }   
+  ]
+}
